@@ -9,6 +9,7 @@ Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-b
 
 
 Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
+![Harman](https://github.com/user-attachments/assets/9a79c29f-2cee-463b-b516-7bd935f2045e)
 
 
 
