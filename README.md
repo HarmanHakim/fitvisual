@@ -130,3 +130,54 @@ Langkah 4 : Testing dan Penyempurnaan
 ![json](./public/image/jsonid.png)
 ![xml](./public/image/xml.png)
 ![xml](./public/image/xmlid.png)
+
+
+
+Soal Tugas 3
+1. Perbedaan antara HttpResponseRedirect() dan redirect():
+   - HttpResponseRedirect(): Fungsi ini digunakan secara eksplisit untuk melakukan pengalihan ke URL tertentu. Dalam penggunaannya, user harus memberikan URL tujuan secara manual.
+   - redirect(): Ini adalah fungsi pintasan di Django yang menawarkan fleksibilitas lebih. user dapat memberikan URL sebagai string atau menggunakan nama view, yang memungkinkan penggunaan URL dinamis dengan parameter.
+
+2. Cara menghubungkan model Product dengan User:
+Untuk menghubungkan model Product dengan User, Django biasanya menggunakan relasi ForeignKey atau ManyToManyField, tergantung pada kebutuhan aplikasi:
+
+   - Menggunakan ForeignKey: Jika satu produk hanya dimiliki oleh satu pengguna, maka relasi yang tepat adalah ForeignKey. Ini menciptakan hubungan "banyak-ke-satu" (banyak produk dapat dimiliki oleh satu pengguna). Contoh implementasinya adalah sebagai berikut:
+
+   - Menggunakan ManyToManyField: Jika produk dapat dimiliki oleh banyak pengguna (misalnya dalam kolaborasi), maka digunakan ManyToManyField:
+     
+3. Perbedaan antara authentication dan authorization serta proses login pengguna:
+   - Authentication: Merupakan proses verifikasi identitas pengguna dengan meminta username dan password. Authentication memeriksa apakah kredensial pengguna cocok dengan informasi yang ada di database. Jika cocok, pengguna dianggap terotentikasi.
+   - Authorization: Proses ini menentukan hak akses pengguna setelah mereka terotentikasi. Authorization memastikan apakah pengguna memiliki izin untuk melakukan tindakan tertentu, seperti mengakses halaman tertentu atau mengubah data.
+
+   Saat pengguna login, proses ini merupakan bagian dari authentication. Django memvalidasi kredensial yang dikirimkan (username dan password) dengan membandingkannya dengan data di database. Jika valid, Django akan mengotentikasi pengguna dan membuat sesi login.
+
+   Django mengimplementasikan kedua konsep ini melalui middleware dan backend otentikasi. Ketika pengguna login, Django menciptakan sesi yang menyimpan status login pengguna dan menggunakan framework permissions untuk menangani authorization, memastikan bahwa pengguna memiliki izin yang sesuai untuk mengakses sumber daya tertentu berdasarkan grup atau level akses.
+
+4. Bagaimana Django mengingat pengguna yang telah login? Kegunaan lain dari cookies dan keamanan cookies:
+   - Pengingat Pengguna Login: Django mengingat pengguna yang telah login menggunakan sesi. Setelah berhasil login, informasi tentang pengguna disimpan dalam sesi yang diidentifikasi oleh cookie yang dikirim ke browser. Cookie ini berisi ID sesi yang digunakan untuk melacak pengguna antara berbagai permintaan HTTP.
+   
+   - Kegunaan Cookies Lainnya: Cookies digunakan untuk menyimpan data penting lainnya dalam aplikasi, seperti:
+     - Menyimpan preferensi pengguna (seperti tema atau bahasa).
+     - Melacak keranjang belanja dalam aplikasi e-commerce.
+     - Mencatat aktivitas pengguna untuk analitik.
+     - Menyimpan token otentikasi untuk sesi login jangka panjang.
+
+   - Keamanan Cookies: Tidak semua cookies aman digunakan. Cookies bisa menjadi target pihak ketiga atau hacker untuk pencurian data jika tidak dienkripsi atau diatur dengan benar. Oleh karena itu, cookies penting seperti cookies sesi atau otentikasi harus dilindungi dengan:
+     - Secure flag: Agar hanya dikirim melalui HTTPS.
+     - HttpOnly flag: Agar tidak dapat diakses oleh JavaScript, mencegah serangan XSS (Cross-site Scripting).
+     - SameSite flag: Untuk mencegah pengiriman cookie lintas situs yang tidak diinginkan, mencegah serangan CSRF (Cross-site Request Forgery).
+
+
+5. Langkah-langkah Implementasi Checklist
+
+Pertama, kita membuat fungsi dan halaman registrasi dengan mengimpor `UserCreationForm` dan `message` dari `django.contrib.auth`. Fungsi `UserCreationForm` memudahkan pembuatan formulir pendaftaran user dalam aplikasi web. Selanjutnya, kita menambahkan fungsi `registrasi` yang bertujuan menghasilkan formulir registrasi dan membuat akun pengguna saat formulir tersebut di-submit. Setelah itu, kita membuat berkas HTML baru yang menyajikan halaman pendaftaran bagi pengguna baru. Formulir ini mengumpulkan data pendaftaran dan mengirimkannya ke server secara aman. Dengan sistem pesan, pengguna dapat menerima umpan balik terkait status pendaftaran mereka. Kemudian, fungsi registrasi diimpor di `views.py` dan `path` ditambahkan ke dalam `urlpatterns`.
+
+Kedua, kita membuat fungsi login dengan mengimpor beberapa modul seperti `authenticate`, `login`, dan `AuthenticationForm`. Modul-modul ini digunakan untuk proses autentikasi dan login. Kemudian, kita menambahkan fungsi `login_user` di `views.py`, di mana fungsi ini memproses login pengguna. Jika valid, fungsi ini membuat sesi untuk pengguna yang berhasil login. Selain itu, kita membuat berkas HTML baru bernama `login.html`, yang berfungsi sebagai template untuk pengguna agar dapat login ke aplikasi, serta memberikan opsi untuk mendaftar jika mereka belum memiliki akun.
+
+Ketiga, kita membatasi akses ke halaman utama dengan menambahkan impor `login_required`, yang merupakan decorator untuk mewajibkan pengguna login terlebih dahulu sebelum mengakses halaman tertentu. Kita menambahkan `@login_required(login_url='/login')` agar halaman utama hanya bisa diakses oleh pengguna yang sudah login. Setelah itu, kita menjalankan proyek Django dan membuka alamat http://localhost:8000/.
+
+Keempat, kita memanfaatkan data dari cookie untuk menampilkan informasi `last_login` di halaman utama. Kita membuka file `views.py` dan mengimpor beberapa fungsi seperti `HttpResponseRedirect`, `reverse`, dan `datetime`. Kemudian, kita menambahkan fungsionalitas cookie bernama `last_login` untuk mencatat kapan terakhir kali pengguna login. Pada fungsi `show_main`, kita tambahkan `'last_login': request.COOKIES['last_login']`, yang bertujuan menampilkan informasi cookie `last_login` pada respons halaman web. Selanjutnya, kita mengubah fungsi `logout_user` dengan menambahkan `response.delete_cookie('last_login')` untuk menghapus cookie `last_login` saat pengguna logout. Kita juga menambahkan pesan yang akan ditampilkan di halaman utama mengenai sesi terakhir login. Setelah itu, proyek Django dijalankan kembali.
+
+Kelima, untuk melihat cookie pada proyek, kita membuka protokol localhost di Chrome, klik kanan pada halaman web, pilih `inspect`, lalu klik tanda di samping `Memory (>>)`, kemudian pilih tab `Application` dan periksa cookie.
+
+Keenam, kita menghubungkan `moodentry` dengan pengguna dengan mengimpor `User` dari `django.contrib.auth.models` di `models.py`. Kemudian, kita menambahkan variabel `user` yang menghubungkan setiap entri produk dengan satu pengguna melalui relasi. Setiap entri produk akan terasosiasi dengan pengguna tertentu. Selanjutnya, kita menambahkan beberapa kode di `views.py` dengan parameter `commit=False` untuk mencegah Django langsung menyimpan objek form ke database. Kita mengubah nilai dari `product_entries` dan `context` untuk menampilkan entri produk yang terasosiasi dengan pengguna yang login. Kode `request.user.username` digunakan untuk menampilkan nama pengguna yang login. Setelah semua perubahan disimpan, kita menjalankan migrasi, dan ketika terjadi error, kita memilih angka 1 untuk menetapkan nilai default pada field `user` di setiap baris yang sudah ada. Terakhir, kita mengimpor `os` dan mengganti variabel `DEBUG` dengan kode yang disediakan.
