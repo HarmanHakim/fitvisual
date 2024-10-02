@@ -4,4 +4,4 @@ from main.models import TokoEntry
 class TokoEntryForm(ModelForm):
     class Meta:
         model = TokoEntry
-        fields = ["nama", "harga", "description"]
+        fields = ["nama", "harga", "description", "image_url"]

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from main.forms import TokoEntryForm
 from main.models import TokoEntry
 from django.http import HttpResponse
@@ -18,9 +18,9 @@ from django.urls import reverse
 def show_main(request):
     toko_entries = TokoEntry.objects.filter(user=request.user)
     context = {
-        'npm' : '2306240080',
-        'name': request.user.username,
-        'class': 'PBP A',
+        'name': 'Pak Bepe',
+        'class': 'PBP D',
+        'npm': '2306123456',
         'toko_entries': toko_entries,
         'last_login': request.COOKIES['last_login'],
     }
@@ -28,7 +28,7 @@ def show_main(request):
     return render(request, "main.html", context)
 
 def create_toko_entry(request):
-    form = TokoEntryForm(request.POST or None)
+    form = TokoEntryForm(request.POST or None, request.FILES or None)
 
     if form.is_valid() and request.method == "POST":
         toko_entry = form.save(commit=False)
@@ -38,6 +38,28 @@ def create_toko_entry(request):
 
     context = {'form': form}
     return render(request, "create_toko_entry.html", context)
+
+@login_required(login_url='/login')
+def edit_toko(request, id):
+    toko_entry = get_object_or_404(TokoEntry, pk=id)
+    if request.method == "POST":
+        form = TokoEntryForm(request.POST, instance=toko_entry)
+        if form.is_valid():
+            form.save()
+            return redirect('main:show_main')
+    else:
+        form = TokoEntryForm(instance=toko_entry)
+    context = {'form': form}
+    return render(request, 'edit_toko.html', context)
+
+@login_required(login_url='/login')
+def delete_toko(request, id):
+    toko_entry = get_object_or_404(TokoEntry, pk=id)
+    if request.method == "POST":
+        toko_entry.delete()
+        return redirect('main:show_main')
+    context = {'toko_entry': toko_entry}
+    return render(request, 'delete_toko.html', context)
 
 def show_xml(request):
     data = TokoEntry.objects.all()
