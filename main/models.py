@@ -9,4 +9,5 @@ class TokoEntry(models.Model):
     nama = models.CharField(max_length=255)
     harga = models.IntegerField()
     description = models.TextField()
-    
+    rating = models.IntegerField(default=0)
+    image_url = models.URLField(max_length=200, null=True, blank=True)

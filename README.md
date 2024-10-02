@@ -181,3 +181,43 @@ Keempat, kita memanfaatkan data dari cookie untuk menampilkan informasi `last_lo
 Kelima, untuk melihat cookie pada proyek, kita membuka protokol localhost di Chrome, klik kanan pada halaman web, pilih `inspect`, lalu klik tanda di samping `Memory (>>)`, kemudian pilih tab `Application` dan periksa cookie.
 
 Keenam, kita menghubungkan `moodentry` dengan pengguna dengan mengimpor `User` dari `django.contrib.auth.models` di `models.py`. Kemudian, kita menambahkan variabel `user` yang menghubungkan setiap entri produk dengan satu pengguna melalui relasi. Setiap entri produk akan terasosiasi dengan pengguna tertentu. Selanjutnya, kita menambahkan beberapa kode di `views.py` dengan parameter `commit=False` untuk mencegah Django langsung menyimpan objek form ke database. Kita mengubah nilai dari `product_entries` dan `context` untuk menampilkan entri produk yang terasosiasi dengan pengguna yang login. Kode `request.user.username` digunakan untuk menampilkan nama pengguna yang login. Setelah semua perubahan disimpan, kita menjalankan migrasi, dan ketika terjadi error, kita memilih angka 1 untuk menetapkan nilai default pada field `user` di setiap baris yang sudah ada. Terakhir, kita mengimpor `os` dan mengganti variabel `DEBUG` dengan kode yang disediakan.
+
+
+Soal Tugas 4
+1. Urutan Prioritas Pengambilan CSS Selector
+   Dalam CSS, ketika beberapa selector diterapkan ke elemen yang sama, urutan prioritasnya mengikuti aturan yang dikenal sebagai specificity. Urutan prioritasnya adalah sebagai berikut:
+   - Inline style (misalnya, gaya CSS langsung pada elemen) memiliki prioritas tertinggi.
+   - ID selector (#id) memiliki prioritas lebih tinggi dibandingkan class, atribut, atau elemen.
+   - Class, pseudo-class, dan attribute selector (.class, :hover, [type="text"]) memiliki prioritas lebih tinggi dibandingkan elemen.
+   - Type selector (tag HTML seperti div, p) dan pseudo-element (::before, ::after) memiliki prioritas paling rendah.
+   Selain itu, penggunaan kata kunci !important akan mengesampingkan urutan prioritas biasa, meskipun penggunaannya sebaiknya dibatasi untuk situasi tertentu karena dapat menyebabkan kode sulit dipelihara.
+
+2. Mengapa Responsive Design Penting dalam Pengembangan Aplikasi Web?
+   Responsive design menjadi penting karena pengguna mengakses aplikasi web dari berbagai perangkat dengan ukuran layar yang berbeda, seperti smartphone, tablet, dan desktop. Tujuan responsive design adalah memastikan tampilan dan fungsionalitas situs web dapat beradaptasi dengan baik di semua perangkat, meningkatkan pengalaman pengguna (user experience).
+
+   Contoh aplikasi yang sudah menerapkan responsive design:
+   - Amazon: Menyediakan pengalaman belanja yang optimal di berbagai ukuran layar, baik di desktop, tablet, maupun ponsel.
+   - Medium: Situs ini menyesuaikan tata letak dan ukuran font sesuai dengan perangkat pengguna.
+
+   Contoh aplikasi yang belum menerapkan responsive design:
+   - Situs web lama yang dirancang hanya untuk desktop, tanpa mempertimbangkan tampilan mobile, seperti situs web korporasi yang ketinggalan zaman.
+
+3. Perbedaan antara Margin, Border, dan Padding:
+   - Margin: Area di luar border yang memberi ruang antara elemen HTML dan elemen lainnya di sekitarnya. Misalnya: margin: 10px;.
+   - Border: Batas di sekitar padding dan konten elemen. Border bisa diberi warna, gaya, dan ketebalan. Misalnya: border: 1px solid black;.
+   - Padding: Ruang di dalam border dan di luar konten. Padding memberi jarak antara konten dan tepi elemen. Misalnya: padding: 20px;.
+
+4. Konsep Flexbox dan Grid Layout Beserta Kegunaannya:
+   - Flexbox: Sistem layout satu dimensi yang digunakan untuk mengatur elemen secara horizontal atau vertikal dalam satu baris atau kolom. Flexbox sangat berguna untuk membuat tata letak yang fleksibel dan menyesuaikan ukuran elemen dalam container, misalnya mengatur menu navigasi, galeri gambar, atau elemen card.
+   - Grid Layout: Sistem layout dua dimensi yang memungkinkan elemen diatur dalam baris dan kolom. Grid cocok digunakan untuk membuat tata letak yang kompleks, seperti dashboard, layout halaman web, atau tata letak aplikasi.
+Perbedaan utama:
+   - Flexbox lebih cocok untuk tata letak satu dimensi (baik baris atau kolom).
+   - Grid lebih cocok untuk tata letak dua dimensi (baris dan kolom).
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+- Mengintegrasikan Tailwind ke aplikasi melalui templates/base.html dengan <script src="https://cdn.tailwindcss.com">.
+- Menambahkan fitur edit produk melalui main.html, views.py, urls.py, dan edit_product.html.
+- Menambahkan fitur hapus produk melalui views.py, urls.py, dan main.html.
+- Menambahkan navbar melalui navbar.html dan menautkannya ke main.html, create_product.html, dan edit_product.html.
+- Mengonfigurasi static files melalui settings.py.
+- Menambahkan styling dengan Tailwind dan CSS eksternal.

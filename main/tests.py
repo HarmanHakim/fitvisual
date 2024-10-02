@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.utils import timezone
-from .models import MoodEntry
+from .models import TokoEntryEntry
 
 # Create your tests here.
 class mainTest(TestCase):

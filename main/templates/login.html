@@ -1,32 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
-<title>Login</title>
+<style>
+    .container {
+        height: 100vh;
+        width: 120px;
+        background-image: url(/static/fotobaju.jpg);
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<div class="container">
+    <div class="min-h-screen flex items-center justify-center w-full py-12 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 rounded-lg shadow-md w-96">
+            <h1 class="text-center text-3xl font-bold  text-purple-500 mb-6">FitVisual Store</h1>
+            <h2 class="text-2xl text-center font-semibold mb-4">Masuk</h2>
+            <p class="mb-6 text-center text-gray-600">Sudah punya akun FitVisual Store? <a href="{% url 'main:register' %}" class="text-purple-500 hover:underline">Daftar</a></p>
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+            <form method="POST" action="" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <input type="text" name="username" placeholder="Username" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button type="submit" class="w-full bg-purple-500 text-white text-center font-semibold py-2 px-4 rounded-lg hover:bg-purple-600 transition duration-300">
+                    Masuk
+                </button>
+            </form>
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+            {% if messages %}
+            <ul class="mt-4">
+                {% for message in messages %}
+                <li class="text-red-600">{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">Dengan mendaftar, saya menyetujui</p>
+                <p class="text-sm text-gray-600">
+                    <a href="#" class="text-purple-500 hover:underline">Syarat & Ketentuan</a> serta <a href="#" class="text-purple-500 hover:underline">Kebijakan Privasi</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
-{% endblock content %}
+<footer class="bg-gray-800 text-white py-4 mt-8">
+    <div class="container mx-auto text-center">
+      <p>FitVisual Store, the next big thing in the fashion world</p>
+    </div>
+  </footer>
+{% endblock content%}
