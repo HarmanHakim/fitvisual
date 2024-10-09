@@ -29,7 +29,7 @@ Model di Django disebut ORM (Object-Relational Mapping) karena menghubungkan obj
 
 
 
-Soal Tugas 2 
+Soal Tugas 3 
 1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 Kita memerlukan data delivery untuk
 - Efisiensi Operasional
@@ -133,7 +133,7 @@ Langkah 4 : Testing dan Penyempurnaan
 
 
 
-Soal Tugas 3
+Soal Tugas 4
 1. Perbedaan antara HttpResponseRedirect() dan redirect():
    - HttpResponseRedirect(): Fungsi ini digunakan secara eksplisit untuk melakukan pengalihan ke URL tertentu. Dalam penggunaannya, user harus memberikan URL tujuan secara manual.
    - redirect(): Ini adalah fungsi pintasan di Django yang menawarkan fleksibilitas lebih. user dapat memberikan URL sebagai string atau menggunakan nama view, yang memungkinkan penggunaan URL dinamis dengan parameter.
@@ -183,7 +183,7 @@ Kelima, untuk melihat cookie pada proyek, kita membuka protokol localhost di Chr
 Keenam, kita menghubungkan `moodentry` dengan pengguna dengan mengimpor `User` dari `django.contrib.auth.models` di `models.py`. Kemudian, kita menambahkan variabel `user` yang menghubungkan setiap entri produk dengan satu pengguna melalui relasi. Setiap entri produk akan terasosiasi dengan pengguna tertentu. Selanjutnya, kita menambahkan beberapa kode di `views.py` dengan parameter `commit=False` untuk mencegah Django langsung menyimpan objek form ke database. Kita mengubah nilai dari `product_entries` dan `context` untuk menampilkan entri produk yang terasosiasi dengan pengguna yang login. Kode `request.user.username` digunakan untuk menampilkan nama pengguna yang login. Setelah semua perubahan disimpan, kita menjalankan migrasi, dan ketika terjadi error, kita memilih angka 1 untuk menetapkan nilai default pada field `user` di setiap baris yang sudah ada. Terakhir, kita mengimpor `os` dan mengganti variabel `DEBUG` dengan kode yang disediakan.
 
 
-Soal Tugas 4
+Soal Tugas 5
 1. Urutan Prioritas Pengambilan CSS Selector
    Dalam CSS, ketika beberapa selector diterapkan ke elemen yang sama, urutan prioritasnya mengikuti aturan yang dikenal sebagai specificity. Urutan prioritasnya adalah sebagai berikut:
    - Inline style (misalnya, gaya CSS langsung pada elemen) memiliki prioritas tertinggi.
@@ -221,3 +221,48 @@ Perbedaan utama:
 - Menambahkan navbar melalui navbar.html dan menautkannya ke main.html, create_product.html, dan edit_product.html.
 - Mengonfigurasi static files melalui settings.py.
 - Menambahkan styling dengan Tailwind dan CSS eksternal.
+
+
+
+
+Soal Tugas 6
+1. Manfaat Penggunaan JavaScript dalam Pengembangan Aplikasi Web:
+   - Interaktivitas: JavaScript memungkinkan pengembangan elemen interaktif di halaman web seperti form dinamis, efek visual, dan animasi yang memberikan pengalaman yang lebih responsif bagi pengguna.
+   - Pengolahan Data di Client-Side: JavaScript dapat digunakan untuk validasi form, pengolahan data, dan manipulasi DOM di sisi pengguna, sehingga mengurangi beban server.
+   - Pengembangan Asynchronous (AJAX): Dengan menggunakan JavaScript, aplikasi web dapat memuat data secara dinamis tanpa harus me-refresh halaman secara keseluruhan, yang menghasilkan pengalaman pengguna yang lebih mulus.
+   - Kompatibilitas Cross-Browser: JavaScript didukung di hampir semua browser modern, yang menjadikannya pilihan yang tepat untuk pengembangan aplikasi web.
+   - Ecosystem yang Kuat: JavaScript memiliki ekosistem yang luas dengan berbagai framework dan library seperti React, Vue, dan Angular yang mempermudah pengembangan aplikasi web yang kompleks.
+
+2. Fungsi await dalam Penggunaan fetch():
+   await digunakan untuk memberitahu JavaScript agar menunggu hasil dari operasi asynchronous seperti fetch() sebelum melanjutkan eksekusi kode berikutnya. Dengan kata lain, await membuat kode berhenti sejenak hingga data dari server dikembalikan.
+
+   Tanpa await:
+   Jika kita tidak menggunakan await, JavaScript tidak akan menunggu hasil dari fetch(), melainkan akan langsung melanjutkan eksekusi ke baris berikutnya, bahkan jika data belum selesai diambil dari server. Hal ini bisa menyebabkan bug karena kode mungkin akan mencoba mengakses data yang belum ada atau mengoperasikan hasil yang belum selesai diproses.
+
+3. Mengapa Menggunakan csrf_exempt untuk AJAX POST?:
+   CSRF (Cross-Site Request Forgery) adalah serangan yang memanfaatkan kepercayaan server pada request dari pengguna yang telah diautentikasi. Django secara default menerapkan perlindungan terhadap serangan ini dengan token CSRF pada form POST. Namun, ketika kita menggunakan AJAX POST, permintaan yang dibuat secara manual dari JavaScript mungkin tidak secara otomatis menyertakan token CSRF, yang akan menyebabkan request tersebut ditolak oleh server.
+
+   Untuk mencegah ini, kita dapat menggunakan decorator csrf_exempt pada view yang digunakan untuk AJAX POST. Decorator ini menonaktifkan perlindungan CSRF untuk view tersebut, sehingga AJAX request dapat diterima meskipun tanpa token CSRF. Namun, perlu berhati-hati dalam penggunaannya agar tidak memperkenalkan celah keamanan.
+
+4. Mengapa Pembersihan Data Input Tidak Dilakukan di Frontend Saja?:
+   Pembersihan atau validasi data di frontend penting untuk meningkatkan pengalaman pengguna (misalnya, validasi input secara langsung). Namun, melakukan pembersihan hanya di frontend tidak cukup karena:
+   - Keamanan: Data yang dikirimkan melalui frontend dapat dimanipulasi oleh pengguna yang jahat (misalnya melalui developer tools). Oleh karena itu, sangat penting untuk memvalidasi ulang dan membersihkan data di backend untuk mencegah serangan injeksi (seperti SQL Injection) dan data yang tidak valid masuk ke sistem.
+   - Konsistensi: Backend memiliki kontrol penuh atas data yang akan disimpan dalam sistem, dan pembersihan di sisi backend memastikan bahwa hanya data yang valid dan aman yang masuk, tanpa tergantung pada aplikasi frontend.
+   - Perlindungan dari Akses Tidak Sah: Frontend dapat dilewati oleh pengguna yang mengirimkan request langsung ke API menggunakan alat seperti Postman. Tanpa validasi di backend, data ini bisa berpotensi merusak sistem.
+
+Pembersihan di backend bertujuan untuk menjaga keamanan dan integritas sistem di luar kendali frontend yang mungkin dapat dieksploitasi.
+
+
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+   AJAX GET    
+   1. Untuk membuat kartu produk bisa diambil menggunakan AJAX GET, kita perlu memasukkan potongan kode kartu produk ke dalam fungsi asinkron  refreshProducts()  di  main.html .
+   2. Fungsi  refreshProducts()  akan memanggil fungsi asinkron lain, yaitu  getProducts() 
+
+   AJAX POST    
+   1. Untuk menambahkan produk dengan AJAX, kita perlu menambahkan tombol di dalam form
+   2. Agar  modal  bisa muncul saat tombol ditekan dan tertutup kembali, kita harus membuat fungsi  showModal()  dan  hideModal() , serta menambahkan  event listener  di dalam bagian  <script> :
+   3. Buat fungsi baru di  views.py  untuk menambahkan produk ke dalam database. Serta memastikan untuk menggunakan  csrf_exempt  dan  require_POST  
+   4. Tambahkan  path  di  urls.py  yang mengarah ke fungsi  add_product_ajax() dan tidak lupa mengimport fungsi tersebut dan menambahkannya ke dalam  urlpatterns
+   5. Hubungkan form di  modal  dengan  path   add_product_ajax  dengan membuat fungsi  addProduct()  dan tambahkan  event listener  di bagian  <script>  di  main.html 
+   6. Supaya data produk bisa ditampilkan dan diperbarui tanpa perlu memuat ulang halaman, tambahkan fungsi asinkron  getProducts()  dan  refreshProducts()  di dalam  <script> .

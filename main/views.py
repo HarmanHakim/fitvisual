@@ -12,16 +12,17 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 # Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
-    toko_entries = TokoEntry.objects.filter(user=request.user)
     context = {
         'name': 'Pak Bepe',
         'class': 'PBP D',
         'npm': '2306123456',
-        'toko_entries': toko_entries,
         'last_login': request.COOKIES['last_login'],
     }
 
@@ -35,6 +36,10 @@ def create_toko_entry(request):
         toko_entry.user = request.user
         toko_entry.save()
         return redirect('main:show_main')
+    
+    else:
+        messages.error(request, "Invalid username or password. Please try again.")
+
 
     context = {'form': form}
     return render(request, "create_toko_entry.html", context)
@@ -111,3 +116,25 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    nama = strip_tags(request.POST.get("nama"))
+    harga = strip_tags(request.POST.get("harga"))
+    description = strip_tags(request.POST.get("description"))
+    image_url = strip_tags(request.POST.get("image_url"))
+
+    print(nama, harga, description, image_url)
+
+    new_product = TokoEntry(
+        nama=nama,
+        harga=harga,
+        description=description,
+        image_url=image_url,
+        user=request.user,
+    )
+    new_product.save()
+
+    return HttpResponse(b"CREATED", status=201)
