@@ -3,56 +3,187 @@
 
 {% block meta %}
 <title>Mental Health Tracker</title>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 {% endblock meta %}
 {% block content %}
 <h1 class="text-3xl font-bold text-center mb-8">Welcome to FitVisual Store</h1>
-
-{% if toko_entries %}
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-gradient-purple">
-    {% for toko_entry in toko_entries %}
-    <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-        <div class="p-4">
-            <img src="{{ toko_entry.image_url }}" alt="{{ toko_entry.nama }}" class="w-full h-48 object-cover mb-4 rounded">
-            <h2 class="text-xl font-semibold mb-2">{{ toko_entry.nama }}</h2>
-            <p class="text-gray-600 mb-2">${{ toko_entry.harga }}</p>
-            <div class="flex items-center mb-4">
-                {% for i in "12345" %}
-                    {% if forloop.counter <= toko_entry.rating %}
-                        <svg class="w-5 h-5 fill-current text-yellow-500" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                    {% else %}
-                        <svg class="w-5 h-5 fill-current text-gray-400" viewBox="0 0 24 24">
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <button class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
-                Buy Now
-            </button>
-        </div>
-        <div class="absolute top-0 right-0 flex space-x-1 p-2">
-            <a href="{% url 'main:edit_toko' toko_entry.pk %}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-            </a>
-            <a href="{% url 'main:delete_toko' toko_entry.pk %}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6zm4 0a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
-                </svg>
-            </a>
-        </div>
+<div id="product_entry_cards"></div>
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+  <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b rounded-t">
+      <h3 class="text-xl font-semibold text-gray-900">
+        Add New Product
+      </h3>
+      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
     </div>
-    {% endfor %}
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="productEntryForm">
+        <div class="mb-4">
+          <label for="nama" class="block text-sm font-medium text-gray-700">Nama</label>
+          <input type="text" id="nama" name="nama" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Enter your nama" required>
+        </div>
+        <div class="mb-4">
+          <label for="harga" class="block text-sm font-medium text-gray-700">Harga</label>
+          <input type="number" id="harga" name="harga" min="1" max="100000" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" required>
+        </div>
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+          <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-indigo-700" placeholder="Describe your feelings" required></textarea>
+        </div>
+        <div class="mb-4">
+          <label for="image_url" class="block text-sm font-medium text-gray-700">Image URL</label>
+          <input type="text" id="image_url" name="image_url" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-indigo-700" required>
+        </div>
+      </form>
+    </div>
+    <!-- Modal footer -->
+    <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+      <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+      <button type="submit" id="submitProductEntry" form="productEntryForm" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+    </div>
+  </div>
 </div>
-{% else %}
-<div class="flex flex-col items-center justify-center h-64">
-    <img src="{% static 'images/no-products.png' %}" alt="No products available" class="w-32 h-32 mb-4">
-    <p class="text-gray-600 text-lg">Belum ada produk yang terdaftar.</p>
-</div>
-{% endif %}
+...
 
 <p class="mt-8 text-center text-sm text-gray-500">Last login: {{ last_login }}</p>
+<script>
+  async function getProductEntries(){
+         const res = await fetch(`${window.location.href}json`).then((res) => {
+                 return res.json();
+         })
+
+         return res;
+  }
+  async function refreshProductEntries() {
+    document.getElementById("product_entry_cards").innerHTML = "";
+    document.getElementById("product_entry_cards").className = "";
+    const products = await getProductEntries();
+
+    console.log(products);
+
+    let htmlString = "";
+    let classNameString = "";
+
+    if (products.length === 0 & products) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+            <div class="flex flex-col items-center justify-center h-64">
+            <img src="{% static 'images/no-products.png' %}" alt="No products available" class="w-32 h-32 mb-4">
+            <p class="text-gray-600 text-lg">Belum ada produk yang terdaftar.</p>
+            </div>
+        `;
+    }
+    else {
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+        products.forEach((item) => {
+            const nama = DOMPurify.sanitize(item.fields.nama);
+            const harga = DOMPurify.sanitize(item.fields.harga);
+            const description = DOMPurify.sanitize(item.fields.description);
+            const rating = DOMPurify.sanitize(item.fields.rating);
+            const image_url = DOMPurify.sanitize(item.fields.image_url);
+
+            htmlString += `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
+                    <div class="p-4">
+                        <img src="${item.fields.image_url}" alt="${nama}" class="w-full h-48 object-cover mb-4 rounded">
+                        <h2 class="text-2xl font-semibold mb-2">${nama}</h2>
+                        <h5 class="text-xl font-semibold mb-2">${harga}</h5>  
+                        <p class="text-sm font-semibold mb-2">${description}</p>
+                        <p class="text-gray-600 mb-2">${harga}}</p>
+                        <div class="flex items-center mb-4">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= toko_entry.rating %}
+                                    <svg class="w-5 h-5 fill-current text-yellow-500" viewBox="0 0 24 24">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                {% else %}
+                                    <svg class="w-5 h-5 fill-current text-gray-400" viewBox="0 0 24 24">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <button class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
+                            Buy Now
+                        </button>
+                    </div>
+                    <div class="absolute top-0 right-0 flex space-x-1 p-2">
+                        <a href="edit_toko/${item.pk}" class="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </a>
+                        <a href="delete_toko/${item.pk}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 transition duration-300 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H3a1 1 0 100 2h1v10a2 2 0 002 2h8a2 2 0 002-2V6h1a1 1 0 100-2h-2V3a1 1 0 00-1-1H6zm3 4a1 1 0 112 0v8a1 1 0 11-2 0V6zm4 0a1 1 0 112 0v8a1 1 0 11-2 0V6z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    document.getElementById("product_entry_cards").className = classNameString;
+    document.getElementById("product_entry_cards").innerHTML = htmlString;    
+    }
+
+    refreshProductEntries();
+
+    function addProductEntry() {
+        console.log("HELLO WORLD");
+        
+        fetch(`${window.location.href}create-ajax`, {
+          method: "POST",
+          body: new FormData(document.querySelector('#productEntryForm')),
+        })
+        .then(response => refreshProductEntries())
+
+        document.getElementById("productEntryForm").reset(); 
+        document.querySelector("[data-modal-toggle='crudModal']").click();
+
+        return false;
+    }
+
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    function showModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50); 
+    }
+
+    function hideModal() {
+        const modal = document.getElementById('crudModal');
+        const modalContent = document.getElementById('crudModalContent');
+
+        modalContent.classList.remove('opacity-100', 'scale-100');
+        modalContent.classList.add('opacity-0', 'scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 150); 
+    }
+
+    document.getElementById("cancelButton").addEventListener("click", hideModal);
+    document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+
+    document.getElementById("productEntryForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        addProductEntry();
+    })
+</script>
+
 {% endblock content %}
